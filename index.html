@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>공수달력 - 프리랜서 근무시간 및 급여 관리 앱</title>
+    
+    <!-- SEO 메타 태그 -->
+    <meta name="description" content="프리랜서와 개인사업자를 위한 스마트한 공수 관리 달력 앱. 근무시간 기록, 급여 계산, 데이터 백업 기능을 제공하는 무료 웹 앱입니다.">
+    <meta name="keywords" content="공수달력, 프리랜서, 근무시간, 급여관리, 시간관리, 공수관리, 일정관리, 달력앱, 업무관리, 개인사업자">
+    <meta name="author" content="공수달력">
+    <meta name="robots" content="index, follow">
+    <meta name="language" content="ko">
+    <meta name="revisit-after" content="7 days">
+    
+    <!-- Open Graph 메타 태그 -->
+    <meta property="og:title" content="공수달력 - 프리랜서 근무시간 및 급여 관리 앱">
+    <meta property="og:description" content="프리랜서와 개인사업자를 위한 스마트한 공수 관리 달력 앱. 근무시간 기록, 급여 계산, 데이터 백업 기능을 제공합니다.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://jshi3352.github.io/time/">
+    <meta property="og:image" content="https://jshi3352.github.io/time/icons/icon-512x512.svg">
+    <meta property="og:site_name" content="공수달력">
+    <meta property="og:locale" content="ko_KR">
+    
+    <!-- Twitter Card 메타 태그 -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="공수달력 - 프리랜서 근무시간 및 급여 관리 앱">
+    <meta name="twitter:description" content="프리랜서와 개인사업자를 위한 스마트한 공수 관리 달력 앱">
+    <meta name="twitter:image" content="https://jshi3352.github.io/time/icons/icon-512x512.svg">
+    
+    <!-- PWA 매니페스트 -->
+    <link rel="manifest" href="./manifest.json">
+    
+    <!-- PWA 메타 태그 -->
+    <meta name="theme-color" content="#2563eb">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="공수달력">
+    
+    <!-- 아이콘 링크 -->
+    <link rel="icon" type="image/svg+xml" href="./icons/icon-192x192.svg">
+    <link rel="apple-touch-icon" href="./icons/icon-192x192.svg">
+    
+    <!-- Google AdSense 자동 광고 -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-0000000000000000"
+            crossorigin="anonymous"></script>
+    
+    <!-- Supabase 라이브러리 -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <!-- 구조화된 데이터 (JSON-LD) -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "공수달력",
+        "description": "프리랜서와 개인사업자를 위한 스마트한 공수 관리 달력 앱. 근무시간 기록, 급여 계산, 데이터 백업 기능을 제공합니다.",
+        "url": "https://jshi3352.github.io/time/",
+        "applicationCategory": "BusinessApplication",
+        "operatingSystem": "Web Browser",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "KRW"
+        },
+        "author": {
+            "@type": "Organization",
+            "name": "공수달력"
+        },
+        "keywords": "공수달력, 프리랜서, 근무시간, 급여관리, 시간관리, 공수관리, 일정관리, 달력앱, 업무관리, 개인사업자",
+        "inLanguage": "ko",
+        "browserRequirements": "Requires JavaScript. Requires HTML5.",
+        "softwareVersion": "1.0",
+        "datePublished": "2024-01-30",
+        "dateModified": "2024-01-30"
+    }
+    </script>
+    
+    <!-- 중요한 리소스 preload -->
+    <link rel="preload" href="./css/style.css" as="style">
+    <link rel="preload" href="./css/calendar.css" as="style">
+    <link rel="preload" href="./js/app.js" as="script">
+    <link rel="preload" href="./js/calendar.js" as="script">
+    
+    <!-- DNS prefetch for external resources -->
+    <link rel="dns-prefetch" href="//cdnjs.cloudflare.com">
+    <link rel="dns-prefetch" href="//fonts.googleapis.com">
+    <link rel="dns-prefetch" href="//fonts.gstatic.com">
+    
+    <link rel="stylesheet" href="./css/style.css">
+    <link rel="stylesheet" href="./css/calendar.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+
+        <!-- 메인 콘텐츠 -->
+        <main class="main-content" role="main">
+            <!-- 상단 헤더 -->
+            <header class="top-header">
+                <div class="header-logo">
+                    <i class="fas fa-calendar-alt"></i>
+                    <h1>공수달력</h1>
+                </div>
+                <div class="header-center">
+                    <button class="today-btn">오늘</button>
+                    <div class="search-box">
+                            <label for="search-input" class="sr-only">검색</label>
+                            <input type="text" id="search-input" placeholder="검색..." aria-label="검색">
+                            <i class="fas fa-search"></i>
+                        </div>
+                    <button class="theme-toggle-btn" id="themeToggle" title="테마 변경">
+                        <i class="fas fa-sun" id="themeIcon"></i>
+                    </button>
+                </div>
+                <div class="month-navigation">
+                    <button id="prev-month"><i class="fas fa-chevron-left"></i></button>
+                    <h2 id="current-month">2023년 7월</h2>
+                    <button id="next-month"><i class="fas fa-chevron-right"></i></button>
+                </div>
+            </header>
+
+            <!-- 월별 요약 정보 -->
+            <section class="monthly-summary top-summary">
+                <div class="summary-card">
+                    <div class="card-title">총 근무일</div>
+                    <div class="card-value">22일</div>
+                </div>
+                <div class="summary-card">
+                    <div class="card-title">총 근무시간</div>
+                    <div class="card-value">176시간</div>
+                </div>
+                <div class="summary-card">
+                    <div class="card-title">기본 단가</div>
+                    <div class="card-value">150,000원</div>
+                    <button class="edit-btn"><i class="fas fa-edit"></i></button>
+                </div>
+                <div class="summary-card highlight">
+                    <div class="card-title">예상 급여</div>
+                    <div class="card-value">3,300,000원</div>
+                </div>
+            </section>
+
+            <!-- 광고 영역 -->
+            <div class="ad-container">
+                <!-- Google AdSense 광고가 여기에 표시됩니다 -->
+            </div>
+
+            <!-- 달력 섹션 -->
+            <section class="calendar-section">
+                <div class="calendar-container">
+                    <div class="calendar-header">
+                        <div class="weekday">일</div>
+                        <div class="weekday">월</div>
+                        <div class="weekday">화</div>
+                        <div class="weekday">수</div>
+                        <div class="weekday">목</div>
+                        <div class="weekday">금</div>
+                        <div class="weekday">토</div>
+                    </div>
+                    <div class="calendar-grid" id="calendar-grid">
+                        <!-- 달력 날짜는 JavaScript로 동적 생성 -->
+                    </div>
+                </div>
+            </section>
+        </div>
+        
+        <!-- 하단 메뉴 섹션 (달력과 독립적) -->
+        <section class="bottom-menu-section">
+            <div class="bottom-menu-container">
+                <div class="menu-item">
+                    <a href="#">
+                        <i class="fas fa-chart-bar"></i>
+                        <span>통계</span>
+                    </a>
+                </div>
+                <div class="menu-item">
+                    <a href="#">
+                        <i class="fas fa-cog"></i>
+                        <span>설정</span>
+                    </a>
+                </div>
+                <div class="menu-item">
+                    <a href="#">
+                        <i class="fas fa-question-circle"></i>
+                        <span>도움말</span>
+                    </a>
+                </div>
+                <div class="menu-item user-menu">
+                    <div class="user-profile">
+                        <i class="fas fa-database"></i>
+                        <div class="user-details">
+                            <span class="user-name">데이터 관리</span>
+                            <span class="user-role">백업 및 복원</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 우측 사이드바는 제거하고 모달로 대체 -->
+    </div>
+
+    <!-- 모달 (단가 설정) -->
+    <div class="modal" id="rate-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>단가 설정</h3>
+                <button class="close-modal"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="input-group">
+                    <label>기본 일당</label>
+                    <input type="number" id="default-daily-rate" value="150000">
+                </div>
+                <div class="input-group">
+                    <label>기본 시급</label>
+                    <input type="number" id="default-hourly-rate" value="18750">
+                </div>
+                <div class="rate-options">
+                    <h4>단가 적용 범위</h4>
+                    <div class="radio-group">
+                        <input type="radio" id="apply-all" name="apply-range" checked>
+                        <label for="apply-all">모든 날짜에 적용</label>
+                    </div>
+                    <div class="radio-group">
+                        <input type="radio" id="apply-month" name="apply-range">
+                        <label for="apply-month">현재 월에만 적용</label>
+                    </div>
+                    <div class="radio-group">
+                        <input type="radio" id="apply-selected" name="apply-range">
+                        <label for="apply-selected">선택한 날짜에만 적용</label>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="cancel-btn">취소</button>
+                <button class="save-rate-btn">저장</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 모달 (상세 정보) -->
+    <div class="modal" id="detail-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>상세 정보</h3>
+                <button class="close-modal" id="close-detail-modal"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="selected-date">
+                    <div class="date-display" id="detail-date-display">2023년 7월 15일 (토)</div>
+                </div>
+                <div class="work-input">
+                    <div class="input-group">
+                        <label>공수 (일)</label>
+                        <div class="work-days-buttons" id="work-days-buttons">
+                            <button class="work-day-btn" data-value="0.5">0.5</button>
+                            <button class="work-day-btn" data-value="1.0">1.0</button>
+                            <button class="work-day-btn" data-value="1.5">1.5</button>
+                            <button class="work-day-btn" data-value="2.0">2.0</button>
+                        </div>
+                        <input type="hidden" id="work-days" value="1">
+                    </div>
+                    <div class="input-group">
+                        <label>근무 시간</label>
+                        <input type="number" id="work-hours" min="0" max="24" value="8">
+                    </div>
+                    <div class="input-group">
+                        <label>일당</label>
+                        <input type="number" id="daily-rate" value="150000">
+                    </div>
+                </div>
+                <div class="memo-section">
+                    <label>메모</label>
+                    <textarea id="day-memo" placeholder="이 날의 메모를 입력하세요..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="delete-btn">삭제</button>
+                <button class="save-btn">저장</button>
+            </div>
+        </main>
+        
+        <!-- 푸터 -->
+        <footer class="app-footer" role="contentinfo">
+            <p>&copy; 2024 공수달력. 프리랜서를 위한 스마트한 공수 관리 솔루션.</p>
+            <div class="footer-links">
+                <a href="privacy-policy.html" target="_blank">개인정보 보호정책</a>
+                <span class="separator">|</span>
+                <a href="terms-of-service.html" target="_blank">이용약관</a>
+            </div>
+        </footer>
+    </div>
+
+    <script src="./js/calendar.js"></script>
+    <!-- Supabase 클라이언트 -->
+    <script src="./js/supabase-client.js"></script>
+    <script src="./js/app.js"></script>
+    
+    <!-- 로그인 상태 확인 및 초기화 -->
+    <script>
+        // 페이지 로드 시 로그인 상태 확인
+        document.addEventListener('DOMContentLoaded', async function() {
+            // 게스트 모드 확인
+            const isGuestMode = localStorage.getItem('guestMode') === 'true';
+            
+            if (!isGuestMode && window.SupabaseClient && window.SupabaseClient.isSupabaseConnected()) {
+                try {
+                    // 로그인 상태 확인
+                    const { data } = await window.SupabaseClient.getCurrentUser();
+                    
+                    if (!data.user) {
+                        // 로그인되지 않은 경우 로그인 페이지로 리다이렉트
+                        window.location.href = 'login.html';
+                        return;
+                    }
+                    
+                    // 로그인된 사용자의 경우 클라우드 데이터 로드
+                    console.log('✅ 로그인된 사용자:', data.user.email);
+                    
+                    // 네비게이션에 로그아웃 버튼 추가
+                    addLogoutButton(data.user.email);
+                    
+                    // 클라우드 데이터와 동기화
+                    await syncWithCloud();
+                    
+                } catch (error) {
+                    console.error('로그인 상태 확인 오류:', error);
+                }
+            } else {
+                // 게스트 모드 또는 Supabase 미설정 시 로컬 모드로 동작
+                console.log('📱 로컬 모드로 실행 중');
+                if (isGuestMode) {
+                    addGuestModeIndicator();
+                }
+            }
+        });
+        
+        // 로그아웃 버튼 추가
+        function addLogoutButton(email) {
+            const nav = document.querySelector('.nav');
+            if (nav && !document.getElementById('userInfo')) {
+                const userInfo = document.createElement('div');
+                userInfo.id = 'userInfo';
+                userInfo.style.cssText = `
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                    margin-left: auto;
+                    font-size: 14px;
+                    color: #666;
+                `;
+                
+                userInfo.innerHTML = `
+                    <span>☁️ ${email}</span>
+                    <button onclick="handleLogout()" style="
+                        padding: 6px 12px;
+                        background: #f8f9fa;
+                        border: 1px solid #dee2e6;
+                        border-radius: 6px;
+                        cursor: pointer;
+                        font-size: 12px;
+                        color: #666;
+                    ">로그아웃</button>
+                `;
+                
+                nav.appendChild(userInfo);
+            }
+        }
+        
+        // 게스트 모드 표시
+        function addGuestModeIndicator() {
+            const nav = document.querySelector('.nav');
+            if (nav && !document.getElementById('guestInfo')) {
+                const guestInfo = document.createElement('div');
+                guestInfo.id = 'guestInfo';
+                guestInfo.style.cssText = `
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                    margin-left: auto;
+                    font-size: 14px;
+                    color: #666;
+                `;
+                
+                guestInfo.innerHTML = `
+                    <span>📱 게스트 모드</span>
+                    <button onclick="goToLogin()" style="
+                        padding: 6px 12px;
+                        background: #007bff;
+                        border: none;
+                        border-radius: 6px;
+                        cursor: pointer;
+                        font-size: 12px;
+                        color: white;
+                    ">로그인</button>
+                `;
+                
+                nav.appendChild(guestInfo);
+            }
+        }
+        
+        // 로그아웃 처리
+        async function handleLogout() {
+            if (window.SupabaseClient) {
+                try {
+                    await window.SupabaseClient.signOut();
+                    localStorage.removeItem('guestMode');
+                    window.location.href = 'login.html';
+                } catch (error) {
+                    console.error('로그아웃 오류:', error);
+                    alert('로그아웃 중 오류가 발생했습니다.');
+                }
+            }
+        }
+        
+        // 로그인 페이지로 이동
+        function goToLogin() {
+            localStorage.removeItem('guestMode');
+            window.location.href = 'login.html';
+        }
+        
+        // 클라우드와 동기화
+        async function syncWithCloud() {
+            if (!window.SupabaseClient || !window.SupabaseClient.isSupabaseConnected()) {
+                return;
+            }
+            
+            try {
+                // 현재 월의 데이터 로드
+                const now = new Date();
+                const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+                const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+                
+                const startDate = startOfMonth.toISOString().split('T')[0];
+                const endDate = endOfMonth.toISOString().split('T')[0];
+                
+                // 클라우드에서 데이터 로드
+                const { data: workRecords, error: workError } = await window.SupabaseClient.loadWorkData(startDate, endDate);
+                const { data: userSettings, error: settingsError } = await window.SupabaseClient.loadUserSettings();
+                
+                if (!workError && workRecords) {
+                    // 클라우드 데이터를 로컬 형식으로 변환
+                    const cloudWorkData = {};
+                    workRecords.forEach(record => {
+                        cloudWorkData[record.work_date] = {
+                            workDays: record.work_days.toString(),
+                            workHours: record.work_hours,
+                            rate: record.daily_rate,
+                            memo: record.memo || ''
+                        };
+                    });
+                    
+                    // 로컬 데이터와 병합
+                    const localData = JSON.parse(localStorage.getItem('gongsooCalendarData') || '{}');
+                    const mergedWorkData = { ...localData.workData, ...cloudWorkData };
+                    
+                    // 설정 데이터 병합
+                    let mergedSettings = localData.settings || {};
+                    if (!settingsError && userSettings) {
+                        mergedSettings = {
+                            defaultDailyRate: userSettings.default_daily_rate,
+                            defaultHourlyRate: userSettings.default_hourly_rate,
+                            defaultWorkDays: userSettings.default_work_days.toString()
+                        };
+                    }
+                    
+                    // 병합된 데이터를 localStorage에 저장
+                    localStorage.setItem('gongsooCalendarData', JSON.stringify({
+                        workData: mergedWorkData,
+                        settings: mergedSettings
+                    }));
+                    
+                    console.log('✅ 클라우드 데이터 동기화 완료');
+                    
+                    // 앱 데이터 새로고침 (app.js의 함수 호출)
+                    if (typeof loadAppData === 'function') {
+                        loadAppData();
+                    }
+                    if (typeof updateCalendar === 'function') {
+                        updateCalendar();
+                    }
+                }
+                
+            } catch (error) {
+                console.error('클라우드 동기화 오류:', error);
+            }
+        }
+    </script>
+    
+    <!-- PWA 서비스 워커 등록 -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then((registration) => {
+                        console.log('서비스 워커 등록 성공:', registration.scope);
+                    })
+                    .catch((error) => {
+                        console.log('서비스 워커 등록 실패:', error);
+                    });
+            });
+        }
+        
+        // PWA 설치 프롬프트
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            
+            // 설치 버튼 표시 (선택사항)
+            const installButton = document.createElement('button');
+            installButton.textContent = '앱 설치';
+            installButton.style.cssText = `
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                background: #2563eb;
+                color: white;
+                border: none;
+                padding: 12px 20px;
+                border-radius: 8px;
+                cursor: pointer;
+                font-size: 14px;
+                box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+                z-index: 1000;
+            `;
+            
+            installButton.addEventListener('click', () => {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        console.log('사용자가 PWA 설치를 수락했습니다');
+                    }
+                    deferredPrompt = null;
+                    installButton.remove();
+                });
+            });
+            
+            document.body.appendChild(installButton);
+        });
+    </script>
+</body>
+</html>

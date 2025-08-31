@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
+        http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
+
+    <!-- 메인 페이지 -->
+    <url>
+        <loc>https://gongsudal.com/</loc>
+        <lastmod>2024-01-30</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>1.0</priority>
+    </url>
+
+    <!-- PWA 매니페스트 -->
+    <url>
+        <loc>https://gongsudal.com/manifest.json</loc>
+        <lastmod>2024-01-30</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.3</priority>
+    </url>
+
+    <!-- CSS 파일들 -->
+    <url>
+        <loc>https://gongsudal.com/css/style.css</loc>
+        <lastmod>2024-01-30</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.4</priority>
+    </url>
+
+    <url>
+        <loc>https://gongsudal.com/css/calendar.css</loc>
+        <lastmod>2024-01-30</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.4</priority>
+    </url>
+
+    <!-- JavaScript 파일들 -->
+    <url>
+        <loc>https://gongsudal.com/js/app.js</loc>
+        <lastmod>2024-01-30</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.4</priority>
+    </url>
+
+    <url>
+        <loc>https://gongsudal.com/js/calendar.js</loc>
+        <lastmod>2024-01-30</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.4</priority>
+    </url>
+
+</urlset>

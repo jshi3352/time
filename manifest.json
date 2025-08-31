@@ -1,0 +1,27 @@
+{
+  "name": "공수달력",
+  "short_name": "공수달력",
+  "description": "프리랜서를 위한 공수 관리 달력 앱",
+  "start_url": "/time/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#2563eb",
+  "orientation": "portrait",
+  "scope": "/time/",
+  "lang": "ko",
+  "categories": ["productivity", "business"],
+  "icons": [
+    {
+      "src": "icons/icon-192x192.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "icons/icon-512x512.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "maskable any"
+    }
+  ]
+}

@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚀 GitHub 프로젝트 업로더</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #24292e 0%, #586069 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1em;
+        }
+
+        .form-section {
+            padding: 40px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+            font-size: 1.1em;
+        }
+
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e1e4e8;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+            outline: none;
+            border-color: #0366d6;
+            box-shadow: 0 0 0 3px rgba(3, 102, 214, 0.1);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .file-drop-zone {
+            border: 3px dashed #d1d5da;
+            border-radius: 10px;
+            padding: 40px;
+            text-align: center;
+            background: #f6f8fa;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .file-drop-zone:hover {
+            border-color: #0366d6;
+            background: #f1f8ff;
+        }
+
+        .file-drop-zone.dragover {
+            border-color: #28a745;
+            background: #f0fff4;
+        }
+
+        .file-list {
+            margin-top: 20px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .file-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background: #f6f8fa;
+            border-radius: 5px;
+            margin-bottom: 5px;
+        }
+
+        .file-item .file-name {
+            font-weight: 500;
+        }
+
+        .file-item .file-size {
+            color: #586069;
+            font-size: 0.9em;
+        }
+
+        .file-item .remove-btn {
+            background: #d73a49;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.8em;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(40, 167, 69, 0.3);
+        }
+
+        .btn:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .progress-container {
+            margin-top: 20px;
+            display: none;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: #e9ecef;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #28a745, #20c997);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .progress-text {
+            text-align: center;
+            margin-top: 10px;
+            font-weight: 600;
+        }
+
+        .log-container {
+            margin-top: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+            display: none;
+        }
+
+        .log-item {
+            padding: 5px 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .log-item:last-child {
+            border-bottom: none;
+        }
+
+        .log-success {
+            color: #28a745;
+        }
+
+        .log-error {
+            color: #dc3545;
+        }
+
+        .log-info {
+            color: #17a2b8;
+        }
+
+        .result-container {
+            margin-top: 20px;
+            padding: 20px;
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            border-radius: 10px;
+            display: none;
+        }
+
+        .result-container h3 {
+            color: #155724;
+            margin-bottom: 10px;
+        }
+
+        .result-container a {
+            color: #0366d6;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .result-container a:hover {
+            text-decoration: underline;
+        }
+
+        .warning {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .warning strong {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+            }
+            
+            .form-section {
+                padding: 20px;
+            }
+            
+            .header {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 GitHub 프로젝트 업로더</h1>
+            <p>브라우저에서 직접 GitHub에 프로젝트를 업로드하세요</p>
+        </div>
+        
+        <div class="form-section">
+            <div class="warning">
+                <strong>⚠️ 보안 주의사항</strong>
+                GitHub Personal Access Token을 입력하기 전에 HTTPS 연결인지 확인하세요. 토큰은 로컬에만 저장되며 서버로 전송되지 않습니다.
+            </div>
+            
+            <form id="uploadForm">
+                <div class="form-group">
+                    <label for="githubToken">🔑 GitHub Personal Access Token</label>
+                    <input type="password" id="githubToken" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" required>
+                    <small style="color: #586069; margin-top: 5px; display: block;">
+                        <a href="https://github.com/settings/tokens" target="_blank">토큰 생성하기</a> (repo 권한 필요)
+                    </small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="githubUsername">👤 GitHub 사용자명</label>
+                    <input type="text" id="githubUsername" placeholder="your-username" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="repoName">📦 저장소 이름</label>
+                    <input type="text" id="repoName" placeholder="my-awesome-project" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="repoDescription">📝 저장소 설명</label>
+                    <textarea id="repoDescription" placeholder="프로젝트에 대한 간단한 설명을 입력하세요"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="repoVisibility">👁️ 저장소 공개 설정</label>
+                    <select id="repoVisibility">
+                        <option value="false">🌍 Public (공개)</option>
+                        <option value="true">🔒 Private (비공개)</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>📁 업로드할 파일들</label>
+                    <div class="file-drop-zone" id="fileDropZone">
+                        <div style="font-size: 3em; margin-bottom: 10px;">📁</div>
+                        <p style="font-size: 1.2em; margin-bottom: 10px;">파일을 드래그 앤 드롭하거나 클릭하여 선택하세요</p>
+                        <p style="color: #586069;">여러 파일 및 폴더 구조를 지원합니다</p>
+                        <input type="file" id="fileInput" multiple webkitdirectory style="display: none;">
+                        <input type="file" id="fileInputSingle" multiple style="display: none;">
+                    </div>
+                    <div style="margin-top: 10px; text-align: center;">
+                        <button type="button" id="selectFolderBtn" style="margin-right: 10px; padding: 10px 20px; background: #0366d6; color: white; border: none; border-radius: 5px; cursor: pointer;">📁 폴더 선택</button>
+                        <button type="button" id="selectFilesBtn" style="padding: 10px 20px; background: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer;">📄 파일 선택</button>
+                    </div>
+                    <div class="file-list" id="fileList"></div>
+                </div>
+                
+                <button type="submit" class="btn" id="uploadBtn">
+                    🚀 GitHub에 업로드하기
+                </button>
+            </form>
+            
+            <div class="progress-container" id="progressContainer">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <div class="progress-text" id="progressText">업로드 준비 중...</div>
+            </div>
+            
+            <div class="log-container" id="logContainer">
+                <h3>📋 업로드 로그</h3>
+                <div id="logContent"></div>
+            </div>
+            
+            <div class="result-container" id="resultContainer">
+                <h3>🎉 업로드 완료!</h3>
+                <p>저장소가 성공적으로 생성되었습니다:</p>
+                <p><strong>저장소 URL:</strong> <a id="repoUrl" href="#" target="_blank"></a></p>
+                <p><strong>GitHub Pages URL:</strong> <a id="pagesUrl" href="#" target="_blank"></a></p>
+                <p style="margin-top: 10px; color: #586069; font-size: 0.9em;">
+                    💡 GitHub Pages를 활성화하려면 저장소 Settings → Pages에서 설정하세요.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class GitHubUploader {
+            constructor() {
+                this.files = new Map();
+                this.setupEventListeners();
+            }
+
+            setupEventListeners() {
+                const form = document.getElementById('uploadForm');
+                const fileDropZone = document.getElementById('fileDropZone');
+                const fileInput = document.getElementById('fileInput');
+                const fileInputSingle = document.getElementById('fileInputSingle');
+                const selectFolderBtn = document.getElementById('selectFolderBtn');
+                const selectFilesBtn = document.getElementById('selectFilesBtn');
+
+                form.addEventListener('submit', (e) => this.handleSubmit(e));
+                
+                fileDropZone.addEventListener('click', () => fileInputSingle.click());
+                fileDropZone.addEventListener('dragover', (e) => this.handleDragOver(e));
+                fileDropZone.addEventListener('drop', (e) => this.handleDrop(e));
+                
+                selectFolderBtn.addEventListener('click', () => fileInput.click());
+                selectFilesBtn.addEventListener('click', () => fileInputSingle.click());
+                
+                fileInput.addEventListener('change', (e) => this.handleFileSelect(e));
+                fileInputSingle.addEventListener('change', (e) => this.handleFileSelect(e));
+            }
+
+            handleDragOver(e) {
+                e.preventDefault();
+                document.getElementById('fileDropZone').classList.add('dragover');
+            }
+
+            handleDrop(e) {
+                e.preventDefault();
+                document.getElementById('fileDropZone').classList.remove('dragover');
+                
+                const files = Array.from(e.dataTransfer.files);
+                this.addFiles(files);
+            }
+
+            handleFileSelect(e) {
+                const files = Array.from(e.target.files);
+                this.addFiles(files);
+            }
+
+            addFiles(files) {
+                files.forEach(file => {
+                    const path = file.webkitRelativePath || file.name;
+                    this.files.set(path, file);
+                });
+                this.updateFileList();
+            }
+
+            updateFileList() {
+                const fileList = document.getElementById('fileList');
+                fileList.innerHTML = '';
+                
+                if (this.files.size === 0) {
+                    fileList.style.display = 'none';
+                    return;
+                }
+                
+                fileList.style.display = 'block';
+                
+                this.files.forEach((file, path) => {
+                    const fileItem = document.createElement('div');
+                    fileItem.className = 'file-item';
+                    
+                    const fileInfo = document.createElement('div');
+                    fileInfo.innerHTML = `
+                        <div class="file-name">${path}</div>
+                        <div class="file-size">${this.formatFileSize(file.size)}</div>
+                    `;
+                    
+                    const removeBtn = document.createElement('button');
+                    removeBtn.className = 'remove-btn';
+                    removeBtn.textContent = '삭제';
+                    removeBtn.onclick = () => {
+                        this.files.delete(path);
+                        this.updateFileList();
+                    };
+                    
+                    fileItem.appendChild(fileInfo);
+                    fileItem.appendChild(removeBtn);
+                    fileList.appendChild(fileItem);
+                });
+            }
+
+            formatFileSize(bytes) {
+                if (bytes === 0) return '0 Bytes';
+                const k = 1024;
+                const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+            }
+
+            async handleSubmit(e) {
+                e.preventDefault();
+                
+                const token = document.getElementById('githubToken').value;
+                const username = document.getElementById('githubUsername').value;
+                const repoName = document.getElementById('repoName').value;
+                const description = document.getElementById('repoDescription').value;
+                const isPrivate = document.getElementById('repoVisibility').value === 'true';
+                
+                if (this.files.size === 0) {
+                    alert('업로드할 파일을 선택해주세요.');
+                    return;
+                }
+                
+                this.showProgress();
+                this.log('🚀 업로드를 시작합니다...', 'info');
+                
+                try {
+                    // 저장소 생성
+                    await this.createRepository(token, repoName, description, isPrivate);
+                    this.log(`✅ 저장소 '${repoName}' 생성 완료`, 'success');
+                    
+                    // 파일 업로드
+                    let uploadedCount = 0;
+                    const totalFiles = this.files.size;
+                    
+                    for (const [path, file] of this.files) {
+                        try {
+                            await this.uploadFile(token, username, repoName, path, file);
+                            uploadedCount++;
+                            
+                            const progress = (uploadedCount / totalFiles) * 100;
+                            this.updateProgress(progress, `${uploadedCount}/${totalFiles} 파일 업로드 완료`);
+                            this.log(`✅ ${path} 업로드 완료`, 'success');
+                        } catch (error) {
+                            this.log(`❌ ${path} 업로드 실패: ${error.message}`, 'error');
+                        }
+                    }
+                    
+                    this.showResult(username, repoName);
+                    this.log('🎉 모든 파일 업로드 완료!', 'success');
+                    
+                } catch (error) {
+                    this.log(`❌ 오류 발생: ${error.message}`, 'error');
+                    alert(`업로드 중 오류가 발생했습니다: ${error.message}`);
+                }
+            }
+
+            async createRepository(token, name, description, isPrivate) {
+                const response = await fetch('https://api.github.com/user/repos', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `token ${token}`,
+                        'Accept': 'application/vnd.github.v3+json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        name: name,
+                        description: description,
+                        private: isPrivate,
+                        auto_init: true
+                    })
+                });
+                
+                if (!response.ok) {
+                    const error = await response.json();
+                    if (response.status === 422 && error.errors && error.errors[0].message.includes('already exists')) {
+                        this.log(`⚠️ 저장소 '${name}'이 이미 존재합니다. 기존 저장소에 파일을 추가합니다.`, 'info');
+                        return;
+                    }
+                    throw new Error(`저장소 생성 실패: ${error.message}`);
+                }
+                
+                return await response.json();
+            }
+
+            async uploadFile(token, username, repoName, filePath, file) {
+                const content = await this.fileToBase64(file);
+                
+                const response = await fetch(`https://api.github.com/repos/${username}/${repoName}/contents/${filePath}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `token ${token}`,
+                        'Accept': 'application/vnd.github.v3+json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        message: `Add ${filePath}`,
+                        content: content
+                    })
+                });
+                
+                if (!response.ok) {
+                    const error = await response.json();
+                    if (response.status === 422 && error.message.includes('already exists')) {
+                        // 파일이 이미 존재하는 경우 업데이트
+                        return await this.updateFile(token, username, repoName, filePath, file);
+                    }
+                    throw new Error(`파일 업로드 실패: ${error.message}`);
+                }
+                
+                return await response.json();
+            }
+
+            async updateFile(token, username, repoName, filePath, file) {
+                // 기존 파일 정보 가져오기
+                const getResponse = await fetch(`https://api.github.com/repos/${username}/${repoName}/contents/${filePath}`, {
+                    headers: {
+                        'Authorization': `token ${token}`,
+                        'Accept': 'application/vnd.github.v3+json'
+                    }
+                });
+                
+                if (!getResponse.ok) {
+                    throw new Error('기존 파일 정보를 가져올 수 없습니다.');
+                }
+                
+                const existingFile = await getResponse.json();
+                const content = await this.fileToBase64(file);
+                
+                const response = await fetch(`https://api.github.com/repos/${username}/${repoName}/contents/${filePath}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `token ${token}`,
+                        'Accept': 'application/vnd.github.v3+json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        message: `Update ${filePath}`,
+                        content: content,
+                        sha: existingFile.sha
+                    })
+                });
+                
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(`파일 업데이트 실패: ${error.message}`);
+                }
+                
+                return await response.json();
+            }
+
+            fileToBase64(file) {
+                return new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.readAsDataURL(file);
+                    reader.onload = () => {
+                        const base64 = reader.result.split(',')[1];
+                        resolve(base64);
+                    };
+                    reader.onerror = error => reject(error);
+                });
+            }
+
+            showProgress() {
+                document.getElementById('progressContainer').style.display = 'block';
+                document.getElementById('logContainer').style.display = 'block';
+                document.getElementById('uploadBtn').disabled = true;
+            }
+
+            updateProgress(percent, text) {
+                document.getElementById('progressFill').style.width = percent + '%';
+                document.getElementById('progressText').textContent = text;
+            }
+
+            log(message, type = 'info') {
+                const logContent = document.getElementById('logContent');
+                const logItem = document.createElement('div');
+                logItem.className = `log-item log-${type}`;
+                logItem.textContent = `${new Date().toLocaleTimeString()} - ${message}`;
+                logContent.appendChild(logItem);
+                logContent.scrollTop = logContent.scrollHeight;
+            }
+
+            showResult(username, repoName) {
+                const resultContainer = document.getElementById('resultContainer');
+                const repoUrl = document.getElementById('repoUrl');
+                const pagesUrl = document.getElementById('pagesUrl');
+                
+                const repoLink = `https://github.com/${username}/${repoName}`;
+                const pagesLink = `https://${username}.github.io/${repoName}`;
+                
+                repoUrl.href = repoLink;
+                repoUrl.textContent = repoLink;
+                pagesUrl.href = pagesLink;
+                pagesUrl.textContent = pagesLink;
+                
+                resultContainer.style.display = 'block';
+                document.getElementById('uploadBtn').disabled = false;
+            }
+        }
+
+        // 페이지 로드 시 업로더 초기화
+        document.addEventListener('DOMContentLoaded', () => {
+            new GitHubUploader();
+        });
+    </script>
+</body>
+</html>

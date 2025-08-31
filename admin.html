@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>광고 관리자 페이지</title>
+    <link rel="stylesheet" href="./css/style.css">
+<link rel="stylesheet" href="./css/admin.css">
+    <!-- Supabase -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="./js/supabase-client.js"></script>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- 로그인 섹션 -->
+        <div id="login-section" class="login-section">
+            <div class="login-card">
+                <h2>🔐 관리자 로그인</h2>
+                <form id="login-form">
+                    <div class="form-group">
+                        <label for="username" class="sr-only">사용자명</label>
+                        <input type="text" id="username" name="username" placeholder="사용자명" required aria-label="사용자명">
+                    </div>
+                    <div class="form-group">
+                        <label for="password" class="sr-only">비밀번호</label>
+                        <input type="password" id="password" name="password" placeholder="비밀번호" required aria-label="비밀번호">
+                    </div>
+                    <button type="submit" class="login-btn">로그인</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- 관리자 대시보드 -->
+        <div id="admin-dashboard" class="admin-dashboard" style="display: none;">
+            <!-- 헤더 -->
+            <header class="admin-header">
+                <h1>📊 광고 관리 대시보드</h1>
+                <div class="header-actions">
+                    <span id="admin-user">관리자</span>
+                    <button id="logout-btn" class="logout-btn">로그아웃</button>
+                </div>
+            </header>
+
+            <!-- 네비게이션 -->
+            <nav class="admin-nav">
+                <button class="nav-btn active" data-section="overview">📈 개요</button>
+                <button class="nav-btn" data-section="ad-management">🎯 광고 관리</button>
+                <button class="nav-btn" data-section="performance">📊 성과 분석</button>
+                <button class="nav-btn" data-section="github-deploy">🚀 GitHub 배포</button>
+                <button class="nav-btn" data-section="database-management">🗄️ 데이터베이스</button>
+                <button class="nav-btn" data-section="settings">⚙️ 설정</button>
+            </nav>
+
+            <!-- 메인 콘텐츠 -->
+            <main class="admin-main">
+                <!-- 개요 섹션 -->
+                <section id="overview-section" class="admin-section active">
+                    <h2>📈 광고 성과 개요</h2>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <h3>총 수익</h3>
+                            <div class="stat-value" id="totalRevenue">$0.00</div>
+                        </div>
+                        <div class="stat-card">
+                            <h3>총 클릭수</h3>
+                            <div class="stat-value" id="totalClicks">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <h3>총 노출수</h3>
+                            <div class="stat-value" id="totalImpressions">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <h3>활성 광고</h3>
+                            <div class="stat-value" id="activeAds">0</div>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <h3>📊 일별 수익 차트</h3>
+                        <canvas id="revenue-chart" width="400" height="200"></canvas>
+                    </div>
+                </section>
+
+                <!-- 광고 관리 섹션 -->
+                <section id="ad-management-section" class="admin-section">
+                    <h2>📱 광고 관리</h2>
+                    <div class="ad-position-management">
+                        <!-- 헤더 광고 -->
+                        <div class="ad-position-card">
+                            <div class="position-header">
+                                <h3>🔝 헤더 광고</h3>
+                                <div class="position-controls">
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" id="header-toggle" data-position="header">
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                    <span class="status-text">비활성</span>
+                                </div>
+                            </div>
+                            <div class="script-section">
+                                <label for="header-script">광고 스크립트:</label>
+                                <textarea id="header-script" data-position="header" rows="6" placeholder="헤더 광고 스크립트를 입력하세요...\n예: Google AdSense, 직접 판매 광고 등"></textarea>
+                                <button class="btn-save" data-position="header">저장</button>
+                            </div>
+                        </div>
+
+                        <!-- 콘텐츠 내 광고 -->
+                        <div class="ad-position-card">
+                            <div class="position-header">
+                                <h3>📄 콘텐츠 내 광고</h3>
+                                <div class="position-controls">
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" id="content-toggle" data-position="content">
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                    <span class="status-text">비활성</span>
+                                </div>
+                            </div>
+                            <div class="script-section">
+                                <label for="content-script">광고 스크립트:</label>
+                                <textarea id="content-script" data-position="content" rows="6" placeholder="콘텐츠 내 광고 스크립트를 입력하세요...\n예: 본문 중간 삽입 광고"></textarea>
+                                <button class="btn-save" data-position="content">저장</button>
+                            </div>
+                        </div>
+
+                        <!-- 사이드바 광고 -->
+                        <div class="ad-position-card">
+                            <div class="position-header">
+                                <h3>📋 사이드바 광고</h3>
+                                <div class="position-controls">
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" id="sidebar-toggle" data-position="sidebar">
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                    <span class="status-text">비활성</span>
+                                </div>
+                            </div>
+                            <div class="script-section">
+                                <label for="sidebar-script">광고 스크립트:</label>
+                                <textarea id="sidebar-script" data-position="sidebar" rows="6" placeholder="사이드바 광고 스크립트를 입력하세요...\n예: 세로형 배너 광고"></textarea>
+                                <button class="btn-save" data-position="sidebar">저장</button>
+                            </div>
+                        </div>
+
+                        <!-- 푸터 광고 -->
+                        <div class="ad-position-card">
+                            <div class="position-header">
+                                <h3>🔻 푸터 광고</h3>
+                                <div class="position-controls">
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" id="footer-toggle" data-position="footer">
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                    <span class="status-text">비활성</span>
+                                </div>
+                            </div>
+                            <div class="script-section">
+                                <label for="footer-script">광고 스크립트:</label>
+                                <textarea id="footer-script" data-position="footer" rows="6" placeholder="푸터 광고 스크립트를 입력하세요...\n예: 하단 배너 광고"></textarea>
+                                <button class="btn-save" data-position="footer">저장</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 성과 분석 섹션 -->
+                <section id="performance-section" class="admin-section">
+                    <h2>📊 성과 분석</h2>
+                    <div class="performance-filters">
+                        <select id="date-range">
+                            <option value="7">최근 7일</option>
+                            <option value="30">최근 30일</option>
+                            <option value="90">최근 90일</option>
+                        </select>
+                        <button id="refresh-data" class="btn-secondary">데이터 새로고침</button>
+                    </div>
+                    <div class="performance-table">
+                        <table id="performance-table">
+                            <thead>
+                                <tr>
+                                    <th>날짜</th>
+                                    <th>노출수</th>
+                                    <th>클릭수</th>
+                                    <th>CTR</th>
+                                    <th>수익</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- 데이터가 JavaScript로 동적 생성됩니다 -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- 설정 섹션 -->
+                <section id="settings-section" class="admin-section">
+                    <h2>⚙️ 설정</h2>
+                    <div class="settings-grid">
+                        <div class="setting-card">
+                            <h3>🔐 계정 관리</h3>
+                            <div class="form-group">
+                                <label for="current-username">현재 아이디:</label>
+                                <input type="text" id="current-username" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label for="new-username">새 아이디:</label>
+                                <input type="text" id="new-username" placeholder="새 아이디를 입력하세요">
+                            </div>
+                            <div class="form-group">
+                                <label for="current-password">현재 비밀번호:</label>
+                                <input type="password" id="current-password" placeholder="현재 비밀번호를 입력하세요">
+                            </div>
+                            <div class="form-group">
+                                <label for="new-password">새 비밀번호:</label>
+                                <input type="password" id="new-password" placeholder="새 비밀번호를 입력하세요">
+                            </div>
+                            <div class="form-group">
+                                <label for="confirm-password">비밀번호 확인:</label>
+                                <input type="password" id="confirm-password" placeholder="새 비밀번호를 다시 입력하세요">
+                            </div>
+                            <button class="btn-primary" id="change-credentials-btn">계정 정보 변경</button>
+                        </div>
+                        <div class="setting-card">
+                            <h3>AdSense 설정</h3>
+                            <div class="form-group">
+                                <label for="publisher-id">Publisher ID:</label>
+                                <input type="text" id="publisher-id" placeholder="pub-0000000000000000">
+                            </div>
+                            <div class="form-group">
+                                <label for="auto-ads">자동 광고:</label>
+                                <input type="checkbox" id="auto-ads" checked>
+                            </div>
+                            <button class="btn-primary">설정 저장</button>
+                        </div>
+                        <div class="setting-card">
+                            <h3>광고 표시 설정</h3>
+                            <div class="form-group">
+                                <label for="mobile-ads">모바일 광고:</label>
+                                <input type="checkbox" id="mobile-ads" checked>
+                            </div>
+                            <div class="form-group">
+                                <label for="desktop-ads">데스크톱 광고:</label>
+                                <input type="checkbox" id="desktop-ads" checked>
+                            </div>
+                            <button class="btn-primary">설정 저장</button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- GitHub 배포 관리 섹션 -->
+                <section id="github-deploy-section" class="admin-section">
+                    <h2>🚀 GitHub 배포 관리</h2>
+                    <p class="section-description">웹사이트를 GitHub Pages로 무료 배포하여 전 세계에 공개할 수 있습니다.</p>
+                    
+                    <!-- 배포 상태 -->
+                    <div class="deploy-status-card">
+                        <h3>📊 현재 상태</h3>
+                        <div class="help-text">💡 GitHub 저장소에 연결하면 자동으로 웹사이트가 배포됩니다.</div>
+                        <div class="status-grid">
+                            <div class="status-item">
+                                <span class="status-label">🔗 GitHub 저장소</span>
+                                <span id="github-status" class="status-value disconnected">연결 필요</span>
+                            </div>
+                            <div class="status-item">
+                                <span class="status-label">⏰ 마지막 배포</span>
+                                <span id="last-deploy" class="status-value">아직 배포 안함</span>
+                            </div>
+                            <div class="status-item">
+                                <span class="status-label">🌐 웹사이트 주소</span>
+                                <span id="deploy-url" class="status-value">배포 후 생성됨</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- GitHub 설정 -->
+                    <div class="github-config-card">
+                        <h3>⚙️ 테스트 배포 설정</h3>
+                        <div class="step-guide">
+                            <div class="step-item">
+                                <span class="step-number">1</span>
+                                <div class="step-content">
+                                    <strong>GitHub 계정이 없다면</strong>
+                                    <p>무료로 GitHub 계정을 만드세요</p>
+                                    <button class="btn-info" onclick="window.open('https://github.com/signup', '_blank')">📝 GitHub 가입하기</button>
+                                </div>
+                            </div>
+                            <div class="step-item">
+                                <span class="step-number">2</span>
+                                <div class="step-content">
+                                    <strong>테스트 저장소 연결</strong>
+                                    <p>저장소명: <code>jshi3352/time</code></p>
+                                    <button class="btn-success" onclick="connectGitHub()">🔗 테스트 저장소 연결하기</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 배포 액션 -->
+                    <div class="deploy-actions-card">
+                        <h3>🎯 테스트 배포하기</h3>
+                        <div class="help-text">💡 저장소 연결 후 아래 버튼을 클릭하면 GitHub 저장소 생성 가이드가 제공됩니다.</div>
+                        <div class="action-buttons">
+                            <button class="btn-success" onclick="deployToGitHub()">
+                                <span class="btn-icon">🚀</span>
+                                <span class="btn-text">
+                                    <strong>테스트 사이트 배포하기</strong>
+                                    <small>jshi3352/time 저장소로 배포</small>
+                                </span>
+                            </button>
+                            <button class="btn-info" onclick="openDeployUrl()">
+                                <span class="btn-icon">🌐</span>
+                                <span class="btn-text">
+                                    <strong>배포된 사이트 보기</strong>
+                                    <small>https://jshi3352.github.io/time</small>
+                                </span>
+                            </button>
+                            <button class="btn-info" onclick="showFileUploadHelper()">
+                                <span class="btn-icon">📁</span>
+                                <span class="btn-text">
+                                    <strong>파일 업로드 도우미</strong>
+                                    <small>GitHub에 파일 업로드 가이드</small>
+                                </span>
+                            </button>
+                        </div>
+                        <div class="help-links">
+                            <a href="https://docs.github.com/pages" target="_blank" class="help-link">📚 GitHub Pages 사용법</a>
+                            <a href="https://github.com/new" target="_blank" class="help-link">➕ 새 저장소 만들기</a>
+                        </div>
+                    </div>
+
+                    <!-- 배포 로그 -->
+                    <div class="deploy-log-card">
+                        <h3>📋 배포 로그</h3>
+                        <div id="deploy-log" class="log-container">
+                            <p class="log-empty">배포 로그가 여기에 표시됩니다...</p>
+                        </div>
+                        <button id="clear-log-btn" class="btn-secondary">로그 지우기</button>
+                    </div>
+                </section>
+
+                <!-- 데이터베이스 관리 섹션 -->
+                <section id="database-management-section" class="admin-section">
+                    <h2>🗄️ 데이터베이스 관리</h2>
+                    <p class="section-description">사용자 데이터를 안전하게 클라우드에 저장하고 관리할 수 있습니다.</p>
+                    
+                    <!-- 연결 상태 -->
+                    <div class="db-status-card">
+                        <h3>📊 연결 상태</h3>
+                        <div class="help-text">💡 Supabase는 무료 클라우드 데이터베이스 서비스입니다.</div>
+                        <div class="status-grid">
+                            <div class="status-item">
+                                <span class="status-label">🔌 데이터베이스 연결</span>
+                                <span id="supabase-status" class="status-value disconnected">설정 필요</span>
+                            </div>
+                            <div class="status-item">
+                                <span class="status-label">👥 총 사용자</span>
+                                <span id="total-users" class="status-value">0</span>
+                            </div>
+                            <div class="status-item">
+                                <span class="status-label">📝 총 작업 기록</span>
+                                <span id="total-records" class="status-value">0</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Supabase 설정 -->
+                    <div class="supabase-config-card">
+                        <h3>⚙️ 데이터베이스 설정</h3>
+                        <div class="step-guide">
+                            <div class="step-item">
+                                <span class="step-number">1</span>
+                                <div class="step-content">
+                                    <strong>Supabase 계정 만들기</strong>
+                                    <p>무료로 클라우드 데이터베이스를 사용하세요</p>
+                                    <button class="btn-info" onclick="window.open('https://supabase.com/dashboard', '_blank')">🔑 Supabase 가입하기</button>
+                                </div>
+                            </div>
+                            <div class="step-item">
+                                <span class="step-number">2</span>
+                                <div class="step-content">
+                                    <strong>연결 확인하기</strong>
+                                    <p>설정이 올바른지 테스트해보세요</p>
+                                    <button class="btn-success" onclick="testSupabaseConnection()">🔍 연결 테스트</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 데이터베이스 액션 -->
+                    <div class="db-actions-card">
+                        <h3>🎯 데이터 관리</h3>
+                        <div class="help-text">💡 정기적으로 데이터를 백업하여 안전하게 보관하세요.</div>
+                        <div class="action-buttons">
+                            <button class="btn-success" onclick="backupDatabase()">
+                                <span class="btn-icon">💾</span>
+                                <span class="btn-text">
+                                    <strong>데이터 백업하기</strong>
+                                    <small>중요한 데이터 안전하게 저장</small>
+                                </span>
+                            </button>
+                            <button class="btn-info" onclick="exportUserData()">
+                                <span class="btn-icon">📥</span>
+                                <span class="btn-text">
+                                    <strong>데이터 다운로드</strong>
+                                    <small>사용자 데이터를 파일로 저장</small>
+                                </span>
+                            </button>
+                        </div>
+                        <div class="help-links">
+                            <a href="https://supabase.com/dashboard" target="_blank" class="help-link">🏠 Supabase 대시보드</a>
+                            <a href="https://supabase.com/docs" target="_blank" class="help-link">📚 Supabase 사용법</a>
+                        </div>
+                    </div>
+
+                    <!-- 사용자 관리 -->
+                    <div class="user-management-card">
+                        <h3>👥 사용자 관리</h3>
+                        <div class="user-stats">
+                            <div class="stat-item">
+                                <span class="stat-label">활성 사용자:</span>
+                                <span id="active-users" class="stat-value">0</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">신규 가입 (7일):</span>
+                                <span id="new-users" class="stat-value">0</span>
+                            </div>
+                        </div>
+                        <div class="user-actions">
+                            <button id="export-users-btn" class="btn-secondary">사용자 목록 내보내기</button>
+                            <button id="send-notification-btn" class="btn-info">공지사항 발송</button>
+                        </div>
+                    </div>
+                </section>
+
+            </main>
+        </div>
+    </div>
+
+    <!-- 광고 편집 모달 -->
+    <div id="ad-edit-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>광고 편집</h2>
+            <form id="edit-ad-form">
+                <div class="form-group">
+                    <label for="edit-ad-name">광고 이름:</label>
+                    <input type="text" id="edit-ad-name" name="edit-ad-name">
+                </div>
+                <div class="form-group">
+                    <label for="edit-ad-size">광고 크기:</label>
+                    <select id="edit-ad-size" name="edit-ad-size">
+                        <option value="728x90">배너 (728x90)</option>
+                        <option value="300x250">중간 직사각형 (300x250)</option>
+                        <option value="320x50">모바일 배너 (320x50)</option>
+                        <option value="responsive">반응형</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="edit-ad-script">광고 스크립트:</label>
+                    <textarea id="edit-ad-script" name="edit-ad-script" rows="6"></textarea>
+                </div>
+                <div class="modal-actions">
+                    <button type="submit" class="btn-primary">저장</button>
+                    <button type="button" class="btn-secondary" id="cancel-edit">취소</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="./js/admin.js"></script>
+</body>
+</html>

@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>공수달력 - 로그인</title>
+    <link rel="stylesheet" href="./css/style.css">
+    <style>
+        /* 로그인 페이지 전용 스타일 */
+        .login-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+        }
+        
+        .login-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            padding: 40px;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+        
+        .login-header {
+            margin-bottom: 30px;
+        }
+        
+        .login-header h1 {
+            color: #333;
+            font-size: 28px;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        
+        .login-header p {
+            color: #666;
+            font-size: 16px;
+            margin: 0;
+        }
+        
+        .login-tabs {
+            display: flex;
+            margin-bottom: 30px;
+            border-radius: 10px;
+            background: #f8f9fa;
+            padding: 4px;
+        }
+        
+        .login-tab {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            background: transparent;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            color: #666;
+        }
+        
+        .login-tab.active {
+            background: white;
+            color: #667eea;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .login-form {
+            display: none;
+        }
+        
+        .login-form.active {
+            display: block;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .login-button {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+        
+        .login-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        .login-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .divider {
+            margin: 30px 0;
+            position: relative;
+            text-align: center;
+            color: #666;
+        }
+        
+        .divider::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: #e9ecef;
+        }
+        
+        .divider span {
+            background: white;
+            padding: 0 20px;
+        }
+        
+        .guest-login {
+            padding: 14px;
+            background: #f8f9fa;
+            color: #666;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+        
+        .guest-login:hover {
+            background: #e9ecef;
+            border-color: #dee2e6;
+        }
+        
+        .error-message {
+            background: #fee;
+            color: #c33;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: none;
+        }
+        
+        .success-message {
+            background: #efe;
+            color: #3c3;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: none;
+        }
+        
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #ffffff;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 8px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .migration-section {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            text-align: left;
+        }
+        
+        .migration-section h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+        
+        .migration-section p {
+            color: #666;
+            margin-bottom: 15px;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        
+        .migration-button {
+            width: 100%;
+            padding: 12px;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .migration-button:hover {
+            background: #218838;
+        }
+        
+        .migration-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        @media (max-width: 480px) {
+            .login-card {
+                padding: 30px 20px;
+                margin: 10px;
+            }
+            
+            .login-header h1 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-card">
+            <div class="login-header">
+                <h1>🗓️ 공수달력</h1>
+                <p>클라우드 동기화로 어디서나 접근하세요</p>
+            </div>
+            
+            <!-- 탭 메뉴 -->
+            <div class="login-tabs">
+                <button class="login-tab active" onclick="switchTab('signin')">로그인</button>
+                <button class="login-tab" onclick="switchTab('signup')">회원가입</button>
+            </div>
+            
+            <!-- 에러/성공 메시지 -->
+            <div id="errorMessage" class="error-message"></div>
+            <div id="successMessage" class="success-message"></div>
+            
+            <!-- 로그인 폼 -->
+            <form id="signinForm" class="login-form active">
+                <div class="form-group">
+                    <label for="signinEmail">이메일</label>
+                    <input type="email" id="signinEmail" required placeholder="your@email.com">
+                </div>
+                <div class="form-group">
+                    <label for="signinPassword">비밀번호</label>
+                    <input type="password" id="signinPassword" required placeholder="비밀번호를 입력하세요">
+                </div>
+                <button type="submit" class="login-button" id="signinButton">
+                    로그인
+                </button>
+            </form>
+            
+            <!-- 회원가입 폼 -->
+            <form id="signupForm" class="login-form">
+                <div class="form-group">
+                    <label for="signupEmail">이메일</label>
+                    <input type="email" id="signupEmail" required placeholder="your@email.com">
+                </div>
+                <div class="form-group">
+                    <label for="signupPassword">비밀번호</label>
+                    <input type="password" id="signupPassword" required placeholder="6자 이상 입력하세요" minlength="6">
+                </div>
+                <div class="form-group">
+                    <label for="signupPasswordConfirm">비밀번호 확인</label>
+                    <input type="password" id="signupPasswordConfirm" required placeholder="비밀번호를 다시 입력하세요" minlength="6">
+                </div>
+                <button type="submit" class="login-button" id="signupButton">
+                    회원가입
+                </button>
+            </form>
+            
+            <!-- 구분선 -->
+            <div class="divider">
+                <span>또는</span>
+            </div>
+            
+            <!-- 게스트 로그인 -->
+            <button class="guest-login" onclick="continueAsGuest()">
+                🚀 게스트로 계속하기 (로컬 저장)
+            </button>
+            
+            <!-- 데이터 마이그레이션 섹션 -->
+            <div class="migration-section" id="migrationSection" style="display: none;">
+                <h3>📦 기존 데이터 마이그레이션</h3>
+                <p>로컬에 저장된 기존 공수 데이터를 클라우드로 이전하시겠습니까?</p>
+                <button class="migration-button" id="migrationButton" onclick="migrateData()">
+                    데이터 마이그레이션 시작
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Supabase 라이브러리 -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <!-- Supabase 클라이언트 -->
+    <script src="./js/supabase-client.js"></script>
+    
+    <script>
+        // 전역 변수
+        let isLoading = false;
+        
+        // 페이지 로드 시 초기화
+        document.addEventListener('DOMContentLoaded', function() {
+            // Supabase 연결 상태 확인
+            if (!window.SupabaseClient.isSupabaseConnected()) {
+                showError('Supabase 설정이 필요합니다. 관리자에게 문의하세요.');
+                return;
+            }
+            
+            // 이미 로그인된 사용자 확인
+            checkExistingSession();
+            
+            // 기존 localStorage 데이터 확인
+            checkLocalStorageData();
+        });
+        
+        // 기존 세션 확인
+        async function checkExistingSession() {
+            try {
+                const { data } = await window.SupabaseClient.getCurrentUser();
+                if (data.user) {
+                    // 이미 로그인된 경우 메인 페이지로 리다이렉트
+                    window.location.href = 'index.html';
+                }
+            } catch (error) {
+                console.log('세션 확인 중 오류:', error);
+            }
+        }
+        
+        // 로컬 스토리지 데이터 확인
+        function checkLocalStorageData() {
+            const localData = localStorage.getItem('gongsooCalendarData');
+            if (localData) {
+                try {
+                    const { workData } = JSON.parse(localData);
+                    const dataCount = Object.keys(workData || {}).length;
+                    if (dataCount > 0) {
+                        document.getElementById('migrationSection').style.display = 'block';
+                        document.querySelector('.migration-section p').textContent = 
+                            `로컬에 저장된 ${dataCount}건의 공수 데이터를 클라우드로 이전하시겠습니까?`;
+                    }
+                } catch (error) {
+                    console.error('로컬 데이터 확인 오류:', error);
+                }
+            }
+        }
+        
+        // 탭 전환
+        function switchTab(tabName) {
+            // 탭 버튼 활성화
+            document.querySelectorAll('.login-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // 폼 전환
+            document.querySelectorAll('.login-form').forEach(form => {
+                form.classList.remove('active');
+            });
+            
+            if (tabName === 'signin') {
+                document.getElementById('signinForm').classList.add('active');
+            } else {
+                document.getElementById('signupForm').classList.add('active');
+            }
+            
+            // 메시지 초기화
+            clearMessages();
+        }
+        
+        // 로그인 폼 처리
+        document.getElementById('signinForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            if (isLoading) return;
+            
+            const email = document.getElementById('signinEmail').value;
+            const password = document.getElementById('signinPassword').value;
+            
+            if (!email || !password) {
+                showError('이메일과 비밀번호를 입력하세요.');
+                return;
+            }
+            
+            setLoading(true, 'signinButton', '로그인 중...');
+            clearMessages();
+            
+            try {
+                const { data, error } = await window.SupabaseClient.signIn(email, password);
+                
+                if (error) {
+                    throw error;
+                }
+                
+                showSuccess('로그인 성공! 메인 페이지로 이동합니다.');
+                
+                // 잠시 후 메인 페이지로 이동
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 1500);
+                
+            } catch (error) {
+                console.error('로그인 오류:', error);
+                showError(getErrorMessage(error));
+            } finally {
+                setLoading(false, 'signinButton', '로그인');
+            }
+        });
+        
+        // 회원가입 폼 처리
+        document.getElementById('signupForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            if (isLoading) return;
+            
+            const email = document.getElementById('signupEmail').value;
+            const password = document.getElementById('signupPassword').value;
+            const passwordConfirm = document.getElementById('signupPasswordConfirm').value;
+            
+            if (!email || !password || !passwordConfirm) {
+                showError('모든 필드를 입력하세요.');
+                return;
+            }
+            
+            if (password !== passwordConfirm) {
+                showError('비밀번호가 일치하지 않습니다.');
+                return;
+            }
+            
+            if (password.length < 6) {
+                showError('비밀번호는 6자 이상이어야 합니다.');
+                return;
+            }
+            
+            setLoading(true, 'signupButton', '회원가입 중...');
+            clearMessages();
+            
+            try {
+                const { data, error } = await window.SupabaseClient.signUp(email, password);
+                
+                if (error) {
+                    throw error;
+                }
+                
+                showSuccess('회원가입 성공! 이메일을 확인하여 계정을 활성화하세요.');
+                
+                // 폼 초기화
+                document.getElementById('signupForm').reset();
+                
+                // 로그인 탭으로 전환
+                setTimeout(() => {
+                    switchTab('signin');
+                    document.querySelector('.login-tab').click();
+                }, 2000);
+                
+            } catch (error) {
+                console.error('회원가입 오류:', error);
+                showError(getErrorMessage(error));
+            } finally {
+                setLoading(false, 'signupButton', '회원가입');
+            }
+        });
+        
+        // 게스트로 계속하기
+        function continueAsGuest() {
+            // 게스트 모드 플래그 설정
+            localStorage.setItem('guestMode', 'true');
+            window.location.href = 'index.html';
+        }
+        
+        // 데이터 마이그레이션
+        async function migrateData() {
+            if (isLoading) return;
+            
+            // 로그인 확인
+            const { data } = await window.SupabaseClient.getCurrentUser();
+            if (!data.user) {
+                showError('데이터 마이그레이션을 위해 먼저 로그인하세요.');
+                return;
+            }
+            
+            setLoading(true, 'migrationButton', '마이그레이션 중...');
+            clearMessages();
+            
+            try {
+                const success = await window.SupabaseClient.migrateLocalStorageToSupabase();
+                
+                if (success) {
+                    showSuccess('데이터 마이그레이션이 완료되었습니다!');
+                    document.getElementById('migrationSection').style.display = 'none';
+                } else {
+                    showError('데이터 마이그레이션 중 오류가 발생했습니다.');
+                }
+                
+            } catch (error) {
+                console.error('마이그레이션 오류:', error);
+                showError('데이터 마이그레이션 중 오류가 발생했습니다.');
+            } finally {
+                setLoading(false, 'migrationButton', '데이터 마이그레이션 시작');
+            }
+        }
+        
+        // 로딩 상태 설정
+        function setLoading(loading, buttonId, text) {
+            isLoading = loading;
+            const button = document.getElementById(buttonId);
+            
+            if (loading) {
+                button.disabled = true;
+                button.innerHTML = `<span class="loading"></span>${text}`;
+            } else {
+                button.disabled = false;
+                button.innerHTML = text;
+            }
+        }
+        
+        // 에러 메시지 표시
+        function showError(message) {
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+            
+            // 성공 메시지 숨기기
+            document.getElementById('successMessage').style.display = 'none';
+        }
+        
+        // 성공 메시지 표시
+        function showSuccess(message) {
+            const successDiv = document.getElementById('successMessage');
+            successDiv.textContent = message;
+            successDiv.style.display = 'block';
+            
+            // 에러 메시지 숨기기
+            document.getElementById('errorMessage').style.display = 'none';
+        }
+        
+        // 메시지 초기화
+        function clearMessages() {
+            document.getElementById('errorMessage').style.display = 'none';
+            document.getElementById('successMessage').style.display = 'none';
+        }
+        
+        // 에러 메시지 변환
+        function getErrorMessage(error) {
+            const message = error.message || error.toString();
+            
+            // 일반적인 Supabase 에러 메시지 한국어 변환
+            if (message.includes('Invalid login credentials')) {
+                return '이메일 또는 비밀번호가 올바르지 않습니다.';
+            }
+            if (message.includes('User already registered')) {
+                return '이미 등록된 이메일입니다.';
+            }
+            if (message.includes('Password should be at least 6 characters')) {
+                return '비밀번호는 6자 이상이어야 합니다.';
+            }
+            if (message.includes('Unable to validate email address')) {
+                return '유효하지 않은 이메일 주소입니다.';
+            }
+            if (message.includes('Email not confirmed')) {
+                return '이메일 인증이 필요합니다. 이메일을 확인하세요.';
+            }
+            
+            return message;
+        }
+    </script>
+</body>
+</html>
