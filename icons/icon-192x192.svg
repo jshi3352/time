@@ -1,1 +1,41 @@
-
+<svg width="192" height="192" viewBox="0 0 192 192" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- 배경 원 -->
+  <circle cx="96" cy="96" r="88" fill="#2563eb"/>
+  
+  <!-- 달력 배경 -->
+  <rect x="48" y="56" width="96" height="80" rx="8" fill="white"/>
+  
+  <!-- 달력 헤더 -->
+  <rect x="48" y="56" width="96" height="24" rx="8" fill="#1e40af"/>
+  
+  <!-- 달력 구멍 -->
+  <circle cx="64" cy="48" r="4" fill="#64748b"/>
+  <circle cx="128" cy="48" r="4" fill="#64748b"/>
+  
+  <!-- 달력 날짜 그리드 -->
+  <g fill="#374151">
+    <!-- 첫 번째 줄 -->
+    <rect x="56" y="88" width="8" height="8" rx="1"/>
+    <rect x="72" y="88" width="8" height="8" rx="1"/>
+    <rect x="88" y="88" width="8" height="8" rx="1"/>
+    <rect x="104" y="88" width="8" height="8" rx="1"/>
+    <rect x="120" y="88" width="8" height="8" rx="1"/>
+    
+    <!-- 두 번째 줄 -->
+    <rect x="56" y="104" width="8" height="8" rx="1"/>
+    <rect x="72" y="104" width="8" height="8" rx="1"/>
+    <rect x="88" y="104" width="8" height="8" rx="1"/>
+    <rect x="104" y="104" width="8" height="8" rx="1"/>
+    <rect x="120" y="104" width="8" height="8" rx="1"/>
+    
+    <!-- 세 번째 줄 (강조된 날짜) -->
+    <rect x="56" y="120" width="8" height="8" rx="1"/>
+    <rect x="72" y="120" width="8" height="8" rx="1" fill="#2563eb"/>
+    <rect x="88" y="120" width="8" height="8" rx="1"/>
+    <rect x="104" y="120" width="8" height="8" rx="1"/>
+    <rect x="120" y="120" width="8" height="8" rx="1"/>
+  </g>
+  
+  <!-- 작업 표시 점 -->
+  <circle cx="76" cy="124" r="2" fill="white"/>
+</svg>
